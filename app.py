@@ -28,7 +28,7 @@ def ret_users():
     return resp(200,"users",usuarios_json,"teste")
 
 #retorna um usuario especifico
-@app.route("/usuario/<id>")
+@app.route("/usuario/<id>",methods=["GET"])
 def ret_user(id):
     usuario_objeto = Usuario.query.filter_by(id=id).first()
     usuario_json = usuario_objeto.to_json()
