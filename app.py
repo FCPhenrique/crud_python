@@ -46,7 +46,7 @@ def new_user():
 
     try:
         usuario_objeto = Usuario(nome = body["nome"],email = body["email"])
-        db.session.add(usuario)
+        db.session.add(usuario_objeto)
         db.session.commit()
         return resp(201,"user",usuario_objeto.to_json(),"Usuario cadastrado")
     except Exception as e:
@@ -56,7 +56,7 @@ def new_user():
 
 #modificar usuario
 @app.route("/usuario/<id>",methods=["PUT"])
-def edit(id):
+def edit_user(id):
     usuario_objeto = Usuario.query.filter_by(id=id).first()
     body = request.get_json()
 
@@ -74,6 +74,18 @@ def edit(id):
 
 
 #deletar usuario
+@app.route("/usuario/<id>",methods=["DELETE"])
+def del_user(id):
+    usuario_objeto = Usuario.query.filter_by(id=id).first()
+
+    try:
+        db.session.delete(usuario_objeto)
+        db.session.commit()
+        return resp(200,"user",usuario_objeto.to_json(),"Usuario Deletado")
+    except Exception as e:
+        print(e)
+        return resp(400,"user",{},"Erro ao Deletar")
+
 
 def resp(status, n_cont, cont, sms = False):
     body = {}
