@@ -25,7 +25,7 @@ def ret_users():
     usuarios_json = [usuarios.to_json() for usuarios in usuario_objetos]
     print(usuarios_json)
 
-    return Response(json.dumps(usuarios_json))
+    return resp(200,"users",usuarios_json,"teste")
 
 #retorna um usuario especifico
 
@@ -34,5 +34,14 @@ def ret_users():
 #modificar usuario
 
 #deletar usuario
+
+def resp(status, n_cont, cont, sms = False):
+    body = {}
+    body[n_cont] = cont
+
+    if(sms):
+        body["mensagem"] = sms
+
+    return Response(json.dumps(body), status = 200, mimetype = "application/json")
 
 app.run()
