@@ -35,7 +35,7 @@ def ret_user(id):
     return resp(200,"user",usuario_json,"ok")
 
 #cadastrar usuario
-@app.routes("/cadastro",methods = ["POST"])
+@app.route("/cadastro",methods = ["POST"])
 def new_user():
     body = request.get_json()
 
@@ -43,15 +43,13 @@ def new_user():
         usuario = Usuario(nome = body["nome"],email = body["email"])
         db.session.add(usuario)
         db.session.commit()
-        return resp(201,"user",usuario.to_json,"Usuario cadastrado")
+        return resp(201,"user",usuario.to_json(),"Usuario cadastrado")
     except Exception as e:
         print(e)
         return resp(400,"user",{},"Erro no cadastrado")
 
 
 #modificar usuario
-@app.routes("/usuario/editar",methods = ["POST"])
-
 #deletar usuario
 
 def resp(status, n_cont, cont, sms = False):
