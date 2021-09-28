@@ -1,3 +1,4 @@
+from re import escape
 from flask import Flask, Response, request
 from flask_sqlalchemy import SQLAlchemy
 import mysql.connector
@@ -30,9 +31,13 @@ def ret_users():
 #retorna um usuario especifico
 @app.route("/usuario/<id>",methods=["GET"])
 def ret_user(id):
-    usuario_objeto = Usuario.query.filter_by(id=id).first()
-    usuario_json = usuario_objeto.to_json()
-    return resp(200,"user",usuario_json,"ok")
+    try:
+        usuario_objeto = Usuario.query.filter_by(id=id).first()
+        usuario_json = usuario_objeto.to_json()
+        return resp(200,"user",usuario_json,"ok")
+    except Exception as e:
+        print(e)
+        return resp(400,"user",{},"Usuario nao existe")
 
 #cadastrar usuario
 @app.route("/cadastro",methods = ["POST"])
@@ -40,16 +45,34 @@ def new_user():
     body = request.get_json()
 
     try:
-        usuario = Usuario(nome = body["nome"],email = body["email"])
+        usuario_objeto = Usuario(nome = body["nome"],email = body["email"])
         db.session.add(usuario)
         db.session.commit()
-        return resp(201,"user",usuario.to_json(),"Usuario cadastrado")
+        return resp(201,"user",usuario_objeto.to_json(),"Usuario cadastrado")
     except Exception as e:
         print(e)
         return resp(400,"user",{},"Erro no cadastrado")
 
 
 #modificar usuario
+@app.route("/usuario/<id>",methods=["PUT"])
+def edit(id):
+    usuario_objeto = Usuario.query.filter_by(id=id).first()
+    body = request.get_json()
+
+    try:
+        if("nome" in body):
+            usuario_objeto.nome = body["nome"]
+        if("email" in body):
+            usuario_objeto.email = body["email"]
+        db.session.add(usuario_objeto)
+        db.session.commit()
+        return resp(200,"user",usuario_objeto.to_json(),"Usuario atualizado")
+    except Exception as e:
+        print(e)
+        return resp(400,"user",{},"Erro ao atualizar")
+
+
 #deletar usuario
 
 def resp(status, n_cont, cont, sms = False):
