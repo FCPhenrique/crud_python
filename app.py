@@ -28,6 +28,11 @@ def ret_users():
     return resp(200,"users",usuarios_json,"teste")
 
 #retorna um usuario especifico
+@app.route("/usuario/<id>")
+def ret_user(id):
+    usuario_objeto = Usuario.query.filter_by(id=id).first()
+    usuario_json = usuario_objeto.to_json()
+    return resp(200,"user",usuario_json,"ok")
 
 #cadastrar usuario
 
